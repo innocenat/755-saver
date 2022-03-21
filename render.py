@@ -34,7 +34,7 @@ def render_body(body):
             out += so
         cls = 'cb'
     elif 'text' in body:
-        c = URL.sub('<a href="\\1" target="_blank">\\1</a>', html.escape(body['text']))
+        c = URL.sub('<a href="\\1" target="_blank">\\1</a>', html.escape(body['text'])).replace("\n", '<br>')
         out = '<div>{}</div>'.format(c)
         cls = 'txt'
     elif 'sticker' in body:
@@ -45,7 +45,7 @@ def render_body(body):
         cls = 'image'
     elif 'comment' in body:
         ts = datetime.fromtimestamp(body['time'], JST)
-        c = URL.sub('<a href="\\1" target="_blank">\\1</a>', html.escape(body['comment']))
+        c = URL.sub('<a href="\\1" target="_blank">\\1</a>', html.escape(body['comment'])).replace("\n", '<br>')
         out = '''
         <div class="post post-qa">
             <header class="post-qa-head">
