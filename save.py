@@ -1,4 +1,4 @@
-from nanagogo import NanagogoTalk
+from nanagogo import NanagogoTalk, NanagogoError
 import time
 import os, os.path
 import json
@@ -161,7 +161,7 @@ def save_talk(talk, path, limit = 5, last_saved_id = 0):
             print('Processing page {}...'.format(i))
             for node in page:
                 if node['post']['postId'] == last_saved_id:
-                    return posts
+                    return posts, nt.info['talk']['name']
                 posts.append(save_post(node, path))
             time.sleep(1)
     else:
@@ -170,7 +170,7 @@ def save_talk(talk, path, limit = 5, last_saved_id = 0):
                 return posts
             posts.append(save_post(node, path))
 
-    return posts
+    return posts, nt.info['talk']['name']
 
 def save_talk_to(talk, path):
     if not os.path.exists(path):
@@ -187,7 +187,7 @@ def save_talk_to(talk, path):
             last_saved_id = int(fp.read())
 
     # Read posts
-    posts = save_talk(talk, path, 0, last_saved_id)
+    posts, talk_name = save_talk(talk, path, 0, last_saved_id)
 
     existing_posts = []
     existing_posts_path = '{}/posts.json'.format(path)
@@ -205,6 +205,11 @@ def save_talk_to(talk, path):
     # Write posts
     with open(existing_posts_path, 'w') as fp:
         json.dump(posts, fp)
+
+    # Write talk name
+    talk_name_file = '{}/name.txt'.format(path)
+    with open(talk_name_file, 'w') as fp:
+        fp.write(talk_name)
     
 def save_with_check(path):
     try:
@@ -213,7 +218,7 @@ def save_with_check(path):
         print('Saving {}...'.format(path))
         save_talk_to(path, PATH.format(path))
         return 0
-    except:
+    except NanagogoError:
         print('Talk {} does not exists!'.format(path))
         return 1
 

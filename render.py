@@ -65,14 +65,14 @@ def render_body(body):
     return out, cls
 
 
-def render_html(m, posts, ml):
+def render_html(m, posts, ml, talk_name):
     output = '''
 <!doctype html>
 <html lang="jp">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Subtitle Editor</title>
+    <title>%TALKNAME%</title>
     <style>
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -221,12 +221,12 @@ def render_html(m, posts, ml):
 <body>
 <div class="container container-head">
     <header class="header">
-        755 Archive
+        %TALKNAME%
     </header>
 </div>
 <div class="container container-body">
     <main class="content">
-'''
+'''.replace('%TALKNAME%', talk_name)
     output += '<h1>{}年{}月</h1>'.format(m[0:4], m[5:])
     for post in posts:
         pid = post['id']
@@ -297,16 +297,19 @@ def sort_by_month(posts):
 def render(name):
     d = PATH.format(name)
     infile = d + '/posts.json'
+    namefile = d + '/name.txt'
     outfile = d + '/html'
     if not os.path.exists(outfile):
         os.makedirs(outfile)
     data = []
     with open(infile) as fp:
         data = json.load(fp)
+    with open(namefile) as fp:
+        talk_name = fp.read()
     months = sort_by_month(data)
     sorted_month = list(sorted(months.keys()))
     for month in sorted_month:
-        out = render_html(month, months[month], sorted_month)
+        out = render_html(month, months[month], sorted_month, talk_name)
         with open('{}/{}.html'.format(outfile, month), 'w') as fp:
             fp.write(out)
     
