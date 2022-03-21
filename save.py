@@ -177,7 +177,6 @@ def save_talk_to(talk, path):
         os.makedirs(path)
     if not os.path.exists(path + '/media'):
         os.makedirs(path + '/media')
-    print(path)
 
     # Check last saved
     last_saved_id = 0
