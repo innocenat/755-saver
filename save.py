@@ -213,5 +213,11 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Usage: python save.py talk_id')
     else:
-        print('Saving {}...'.format(sys.argv[1]))
-        save_talk_to(sys.argv[1], PATH.format(sys.argv[1]))
+        try:
+            nt = NanagogoTalk(sys.argv[1])
+            nt.info()
+            print('Saving {}...'.format(sys.argv[1]))
+            save_talk_to(sys.argv[1], PATH.format(sys.argv[1]))
+        except:
+            print('Talk {} does not exists!'.format(sys.argv[1]))
+            sys.exit(1)
