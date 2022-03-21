@@ -206,18 +206,28 @@ def save_talk_to(talk, path):
     with open(existing_posts_path, 'w') as fp:
         json.dump(posts, fp)
     
-
+def save_with_check(path):
+    try:
+        nt = NanagogoTalk(path)
+        nt.info # To trigger exception if not exist
+        print('Saving {}...'.format(path))
+        save_talk_to(path, PATH.format(path))
+        return 0
+    except:
+        print('Talk {} does not exists!'.format(path))
+        return 1
 
 if __name__ == '__main__':
     import sys
     if len(sys.argv) < 2:
         print('Usage: python save.py talk_id')
     else:
-        try:
-            nt = NanagogoTalk(sys.argv[1])
-            nt.info()
-            print('Saving {}...'.format(sys.argv[1]))
-            save_talk_to(sys.argv[1], PATH.format(sys.argv[1]))
-        except:
-            print('Talk {} does not exists!'.format(sys.argv[1]))
-            sys.exit(1)
+        if sys.argv[1] == 'all':
+            path = PATH.format('')
+            subfolders = [f.name for f in os.scandir(path) if f.is_dir()]
+            for t in subfolders:
+                save_with_check(t)
+        else:
+            result = save_with_check(sys.argv[1])
+            if result == 1:
+                sys.exit(result)
