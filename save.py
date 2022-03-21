@@ -15,6 +15,9 @@ POST_TYPE_VID = 6
 POST_TYPE_CB  = 7
 POST_TYPE_CB2 = 8
 
+POST_TYPE_USER_JOIN = 101
+POST_TYPE_USER_LEFT = 102
+
 BODY_TYPE_TXT = 1
 BODY_TYPE_STK = 2
 BODY_TYPE_IMG = 3
@@ -77,8 +80,11 @@ def save_post(post, path, useUUID = False):
     # Standard text post
     if post['post']['postType'] == POST_TYPE_TXT:
         if len(post['post']['body']) != 1 or (post['post']['body'][0]['bodyType'] != BODY_TYPE_TXT and post['post']['body'][0]['bodyType'] != BODY_TYPE_LNK):
-            post_error(post)
-            return {'error': True}
+            # Somehow this can be a combi post, so process as combi
+            pp['content'] = [
+                make_content(pp['id'], x, path) for x in post['post']['body']
+            ]
+            return pp
         pp['content'] = make_content(pp['id'], post['post']['body'][0], path)
         return pp
 
@@ -100,12 +106,11 @@ def save_post(post, path, useUUID = False):
 
     # QA post
     if post['post']['postType'] == POST_TYPE_QA:
-        if len(post['post']['body']) != 2 or post['post']['body'][0]['bodyType'] != BODY_TYPE_QA or post['post']['body'][1]['bodyType'] != BODY_TYPE_TXT:
+        if len(post['post']['body']) < 2 or post['post']['body'][0]['bodyType'] != BODY_TYPE_QA:
             post_error(post)
             return {'error': True}
         pp['content'] = [
-            make_content(pp['id'], post['post']['body'][0], path),
-            make_content(pp['id'], post['post']['body'][1], path),
+            make_content(pp['id'], x, path) for x in post['post']['body']
         ]
         return pp
     
@@ -132,6 +137,13 @@ def save_post(post, path, useUUID = False):
         ]
         return pp
 
+    # User join the talk
+    if post['post']['postType'] == POST_TYPE_USER_JOIN:
+        return {'user_join': post['user']['name']}
+
+    # User left the talk
+    if post['post']['postType'] == POST_TYPE_USER_LEFT:
+        return {'user_left': post['user']['name']}
 
     post_error(post)
     return {'error': True}
