@@ -312,11 +312,28 @@ def render(name):
         out = render_html(month, months[month], sorted_month, talk_name)
         with open('{}/{}.html'.format(outfile, month), 'w') as fp:
             fp.write(out)
-    
+
+def render_with_check(name):
+    if os.path.exists(PATH.format(name)):
+        render(name)
+        return 0
+    else:
+        print("Talk {} not saved!".format(name))
+        return 1
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) < 2:
         print('Usage: python render.py talk_id')
     else:
-        print('Rendering {}...'.format(sys.argv[1]))
-        render(sys.argv[1])
+        if sys.argv[1] == 'all':
+            path = PATH.format('')
+            subfolders = [f.name for f in os.scandir(path) if f.is_dir()]
+            for t in subfolders:
+                print('Rendering {}...'.format(t))
+                render_with_check(t)
+        else:
+            print('Rendering {}...'.format(sys.argv[1]))
+            result = render_with_check(sys.argv[1])
+            if result == 1:
+                sys.exit(1)
