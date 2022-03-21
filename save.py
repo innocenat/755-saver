@@ -17,6 +17,7 @@ POST_TYPE_CB2 = 8
 
 POST_TYPE_USER_JOIN = 101
 POST_TYPE_USER_LEFT = 102
+POST_TYPE_USER_INIT = 104   # Not sure
 
 BODY_TYPE_TXT = 1
 BODY_TYPE_STK = 2
@@ -139,11 +140,15 @@ def save_post(post, path, useUUID = False):
 
     # User join the talk
     if post['post']['postType'] == POST_TYPE_USER_JOIN:
-        return {'user_join': post['user']['name']}
+        return {'user_join': post['user']['name'], 'id': pp['id']}
 
     # User left the talk
     if post['post']['postType'] == POST_TYPE_USER_LEFT:
-        return {'user_left': post['user']['name']}
+        return {'user_left': post['user']['name'], 'id': pp['id']}
+
+    # Unknown but exists in older talk at post #2
+    if post['post']['postType'] == POST_TYPE_USER_INIT:
+        return {'unknown': True, 'id': pp['id']}
 
     post_error(post)
     return {'error': True}
