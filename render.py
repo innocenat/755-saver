@@ -302,15 +302,15 @@ def render(name):
     if not os.path.exists(outfile):
         os.makedirs(outfile)
     data = []
-    with open(infile) as fp:
+    with open(infile, encoding='utf-8') as fp:
         data = json.load(fp)
-    with open(namefile) as fp:
+    with open(namefile, encoding='utf-8') as fp:
         talk_name = fp.read()
     months = sort_by_month(data)
     sorted_month = list(sorted(months.keys()))
     for month in sorted_month:
         out = render_html(month, months[month], sorted_month, talk_name)
-        with open('{}/{}.html'.format(outfile, month), 'w') as fp:
+        with open('{}/{}.html'.format(outfile, month), 'w', encoding='utf-8') as fp:
             fp.write(out)
 
 def render_with_check(name):

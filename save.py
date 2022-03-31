@@ -187,7 +187,7 @@ def save_talk_to(talk, path):
     last_saved_id = 0
     last_saved_path = '{}/saved_until'.format(path)
     if os.path.exists(last_saved_path):
-        with open(last_saved_path) as fp:
+        with open(last_saved_path, encoding='utf-8') as fp:
             last_saved_id = int(fp.read())
 
     # Read posts
@@ -196,23 +196,23 @@ def save_talk_to(talk, path):
     existing_posts = []
     existing_posts_path = '{}/posts.json'.format(path)
     if os.path.exists(existing_posts_path):
-        with open(existing_posts_path) as fp:
+        with open(existing_posts_path, encoding='utf-8') as fp:
             existing_posts = json.load(fp)
     
     posts = posts + existing_posts
 
     # Write last saved
     last_saved_id = posts[0]['id']
-    with open(last_saved_path, 'w') as fp:
+    with open(last_saved_path, 'w', encoding='utf-8') as fp:
         fp.write(str(last_saved_id))
 
     # Write posts
-    with open(existing_posts_path, 'w') as fp:
+    with open(existing_posts_path, 'w', encoding='utf-8') as fp:
         json.dump(posts, fp)
 
     # Write talk name
     talk_name_file = '{}/name.txt'.format(path)
-    with open(talk_name_file, 'w') as fp:
+    with open(talk_name_file, 'w', encoding='utf-8') as fp:
         fp.write(talk_name)
     
 def save_with_check(path):
