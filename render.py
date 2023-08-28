@@ -54,7 +54,7 @@ def render_body(body):
             </header>
             <div class="post-qa-body post-txt">{}</div>
         </div>
-        '''.format(html.escape(body['name']), ts.strftime('%Y-%m-%d %-H:%M'), c)
+        '''.format(html.escape(body['name']), ts.strftime('%Y-%m-%d %H:%M'), c)
         cls = 'qa'
     elif 'video' in body:
         out = '<video controls src="../{}" class="vid"></video>'.format(body['video'])
@@ -235,6 +235,8 @@ def render_html(m, posts, ml, talk_name):
         if 'original' in post:
             # Is a retweet
             orig = post['original']
+            if 'error' in orig:
+                continue
             rts = datetime.fromtimestamp(orig['time'], JST)
             rt_body, rt_bcls = render_body(orig['content'])
             bcls = 'rt'
@@ -248,7 +250,7 @@ def render_html(m, posts, ml, talk_name):
                         {}
                     </main>
                 </div>
-            '''.format(rt_bcls, html.escape(orig['name']), orig['id'], rts.strftime('%Y-%m-%d %-H:%M'), rt_bcls, rt_body)
+            '''.format(rt_bcls, html.escape(orig['name']), orig['id'], rts.strftime('%Y-%m-%d %H:%M'), rt_bcls, rt_body)
             rtC, lC, cC = orig['rtCount'], orig['likeCount'], orig['commentCount']
         else:
             body, bcls = render_body(post['content'])
@@ -268,7 +270,7 @@ def render_html(m, posts, ml, talk_name):
                 <span><b>Comment:</b> {}</span>
             </footer>
         </div>
-'''.format(html.escape(name), pid, ts.strftime('%Y-%m-%d %-H:%M'), bcls, body, rtC, lC, cC)
+'''.format(html.escape(name), pid, ts.strftime('%Y-%m-%d %H:%M'), bcls, body, rtC, lC, cC)
     output += '''
     </main>
     <nav class="navbar">

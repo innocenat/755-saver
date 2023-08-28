@@ -237,6 +237,9 @@ if __name__ == '__main__':
             for t in subfolders:
                 save_with_check(t)
         else:
-            result = save_with_check(sys.argv[1])
-            if result == 1:
-                sys.exit(result)
+            results = 0
+            for i in range(1, len(sys.argv)):
+                result = save_with_check(sys.argv[i])
+                results = 1 if result == 1 else results
+            if results == 1:
+                sys.exit(results)
